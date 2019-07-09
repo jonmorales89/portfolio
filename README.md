@@ -1,6 +1,6 @@
-# portfolio
+# Code Bricks Portfolio
 
-> Showcase portfolio
+> Showcase portfolio for freelance projects
 
 ## Build Setup
 
@@ -18,5 +18,3 @@ $ yarn start
 # generate static project
 $ yarn generate
 ```
-
-For detailed explanation on how things work, checkout [Nuxt.js docs](https://nuxtjs.org).
