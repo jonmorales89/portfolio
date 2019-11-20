@@ -13,12 +13,41 @@ const formatDateTime = date => {
 export default {
     namespaced: true,
 
-    state: {},
+    state: {
+        loading: false,
+        snackbar: {
+            color: null,
+            open: false,
+            text: null
+        }
+    },
 
-    getters: {},
+    getters: {
+        snackbar: state => () =>state.snackbar
+    },
 
     actions: {
+        all: async (context, { payload, message }) => {
+            await Promise.all(payload).then(() => {
+                context.commit('TOGGLE_LOADING');
+
+                context.commit(
+                    'TOGGLE_SNACKBAR',
+                    { status: 'success', text: message }
+                );
+            }).catch(error => {
+                context.commit('TOGGLE_LOADING');
+
+                context.commit(
+                    'TOGGLE_SNACKBAR',
+                    { status: 'error', text: error }
+                );
+            });
+        },
+
         delete: async (context, { start }) => {
+            context.commit('TOGGLE_LOADING');
+
             let api = `${process.env.TEAM_UP_CALENDAR_API}/events`;
 
             const start_date = format(new Date(start), 'yyyy-MM-dd');
@@ -37,7 +66,10 @@ export default {
                 promises.push($axios.delete(`${api}/${event.id}?version=${event.version}`));
             });
 
-            await Promise.all(promises);
+            await context.dispatch(
+                'all',
+                { payload: promises, message: 'Week deleted successfully' }
+            );
         },
 
         fetch: async (context, {api}) => {
@@ -52,6 +84,8 @@ export default {
         },
 
         generate: async (context, { start }) => {
+            context.commit('TOGGLE_LOADING');
+
             let api = `${process.env.TEAM_UP_CALENDAR_API}/events`;
 
             const start_date = format(subWeeks(new Date(start), 1), 'yyyy-MM-dd');
@@ -102,9 +136,22 @@ export default {
                 promises.push($axios.post(api, event))
             });
 
-           await Promise.all(promises);
+           await context.dispatch('all', {
+               payload: promises,
+               message: 'Week generated successfully'
+           });
         }
     },
 
-    mutations: {}
+    mutations: {
+        TOGGLE_SNACKBAR: (state, { status = null, text = null }) => {
+            state.snackbar.open = !state.snackbar.open;
+            state.snackbar.color = status;
+            state.snackbar.text = text;
+        },
+
+        TOGGLE_LOADING: state => {
+            state.loading = !state.loading
+        }
+    }
 }

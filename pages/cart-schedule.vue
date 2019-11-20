@@ -51,7 +51,7 @@
             <v-card-actions>
                 <v-btn
                     text
-                    :disabled="!dateFormatted"
+                    :disabled="!dateFormatted || loading"
                     @click="generateWeek"
                 >
                     Generate
@@ -59,17 +59,36 @@
 
                 <v-btn
                         text
-                        :disabled="!dateFormatted"
+                        :disabled="!dateFormatted || loading"
                         @click="deleteWeek"
                 >
                     Delete
                 </v-btn>
             </v-card-actions>
         </v-card>
+
+        <v-snackbar
+                v-model="snackbar.open"
+                :color="snackbar.color"
+                :timeout="0"
+        >
+            {{ snackbar.text }}
+            <v-btn
+                    :color="snackbar.color"
+                    text
+                    @click="close"
+            >
+                Close
+            </v-btn>
+        </v-snackbar>
     </section>
 </template>
 
 <script>
+    import { createNamespacedHelpers } from 'vuex';
+
+    const { mapState } = createNamespacedHelpers('Cart');
+
     export default {
         name: 'CartSchedule.vue',
 
@@ -80,20 +99,28 @@
         }),
 
         computed: {
+            ...mapState(['snackbar', 'loading']),
+
             computedDateFormatted () {
                 return this.formatDate(this.date)
-            },
+            }
         },
 
         watch: {
             date (val) {
                 this.dateFormatted = this.formatDate(this.date)
-            },
+            }
         },
 
         methods: {
-            allowedDates (val){
-                console.log(val);
+            deleteWeek() {
+                this.$store.dispatch('Cart/delete', { start: this.dateFormatted });
+
+                this.reset();
+            },
+
+            close() {
+                this.$store.commit('Cart/TOGGLE_SNACKBAR', {});
             },
 
             formatDate (date) {
@@ -104,6 +131,12 @@
                 return `${month}/${day}/${year}`
             },
 
+            generateWeek() {
+                this.$store.dispatch('Cart/generate', { start: this.dateFormatted });
+
+                this.reset();
+            },
+
             parseDate (date) {
                 if (!date) return null;
 
@@ -111,12 +144,9 @@
                 return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
             },
 
-            generateWeek() {
-                this.$store.dispatch('Cart/generate', { start: this.dateFormatted })
-            },
-
-            deleteWeek() {
-                this.$store.dispatch('Cart/delete', { start: this.dateFormatted });
+            reset() {
+                this.date = null;
+                this.dateFormatted = null;
             }
         }
     }
