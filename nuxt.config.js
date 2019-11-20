@@ -71,6 +71,7 @@ export default {
     }
   },
   env: {
-    teamUpApiKey: process.env.TEAM_UP_API_KEY
+    TEAM_UP_API_KEY: process.env.TEAM_UP_API_KEY,
+    TEAM_UP_CALENDAR_API: process.env.TEAM_UP_CALENDAR_API
   }
 }
