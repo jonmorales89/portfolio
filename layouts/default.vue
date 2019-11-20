@@ -98,13 +98,13 @@ export default {
       items: [
         {
           icon: 'apps',
-          title: 'Welcome',
+          title: 'Home',
           to: '/'
         },
         {
-          icon: 'bubble_chart',
-          title: 'Inspire',
-          to: '/inspire'
+          icon: 'mdi-calendar-month',
+          title: 'Cart Schedule',
+          to: '/cart-schedule'
         }
       ],
       miniVariant: false,
