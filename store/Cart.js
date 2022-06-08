@@ -48,11 +48,11 @@ export default {
         delete: async (context, { start }) => {
             context.commit('TOGGLE_LOADING');
 
-            let api = `${process.env.TEAM_UP_CALENDAR_API}/events`;
+            let api = `${process.env.TEAM_UP_CALENDAR_KEY}/events`;
 
             const start_date = format(new Date(start), 'yyyy-MM-dd');
 
-            const end_date = format(addWeeks(new Date(start), 1), 'yyyy-MM-dd');
+            const end_date = format(subDays(addWeeks(new Date(start), 1), 1), 'yyyy-MM-dd');
 
             const fetch_api = `${api}?startDate=${start_date}&endDate=${end_date}`;
 
@@ -86,7 +86,7 @@ export default {
         generate: async (context, { start }) => {
             context.commit('TOGGLE_LOADING');
 
-            let api = `${process.env.TEAM_UP_CALENDAR_API}/events`;
+            let api = `${process.env.TEAM_UP_CALENDAR_KEY}/events`;
 
             const start_date = format(subWeeks(new Date(start), 1), 'yyyy-MM-dd');
 
@@ -96,7 +96,7 @@ export default {
 
             const { data } = await context.dispatch('fetch', { api });
 
-            context.dispatch('parse', { events: data.events });
+            await context.dispatch('parse', { events: data.events });
         },
 
         parse: async (context, { events }) => {
@@ -131,7 +131,7 @@ export default {
             let promises = [];
 
             events.forEach(event => {
-                const api = `${process.env.TEAM_UP_CALENDAR_API}/events`;
+                const api = `${process.env.TEAM_UP_CALENDAR_KEY}/events`;
 
                 promises.push($axios.post(api, event))
             });
