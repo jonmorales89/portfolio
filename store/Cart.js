@@ -48,7 +48,7 @@ export default {
         delete: async (context, { start }) => {
             context.commit('TOGGLE_LOADING');
 
-            let api = `${process.env.TEAM_UP_CALENDAR_KEY}/events`;
+            let api = `${process.env.NUXT_ENV_CALENDAR_KEY}/events`;
 
             const start_date = format(new Date(start), 'yyyy-MM-dd');
 
@@ -86,7 +86,7 @@ export default {
         generate: async (context, { start }) => {
             context.commit('TOGGLE_LOADING');
 
-            let api = `${process.env.TEAM_UP_CALENDAR_KEY}/events`;
+            let api = `${process.env.NUXT_ENV_CALENDAR_KEY}/events`;
 
             const start_date = format(subWeeks(new Date(start), 1), 'yyyy-MM-dd');
 
@@ -131,7 +131,7 @@ export default {
             let promises = [];
 
             events.forEach(event => {
-                const api = `${process.env.TEAM_UP_CALENDAR_KEY}/events`;
+                const api = `${process.env.NUXT_ENV_CALENDAR_KEY}/events`;
 
                 promises.push($axios.post(api, event))
             });
