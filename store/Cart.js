@@ -1,5 +1,5 @@
 import $axios from '../plugins/axios.js';
-import { format, subDays, subWeeks, addWeeks, addDays, parseISO } from 'date-fns';
+import { format, subDays, subWeeks, addWeeks, parseISO } from 'date-fns';
 
 const formatDateTime = date => {
     let formatted_date =
